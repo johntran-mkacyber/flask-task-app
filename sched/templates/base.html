@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <title>{% block title %}{% endblock title %}</title>
+    <link href="http://netdna.bootstrapcdn.com/bootswatch/2.3.2/united/bootstrap.min.css" rel="stylesheet">
+    <link href="http://getbootstrap.com/2.3.2/assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    {# Link any other .css or .js found in app static folder #}
+    <style>
+    {# Add simple CSS style tweaks here #}
+    </style>
+    <script>
+    $(function() {
+        {# Add page-load JavaScript here #}
+    });
+    </script>
+    {% block extra_head %}{% endblock extra_head %}
+</head>
+<body>
+    <div id="main">
+        <div class="utility-nav navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    {# Navbar goes here #}
+                </div>
+            </div>
+        </div>
+        <div class="content container">
+            {% block main %}{% endblock main %}
+        </div>
+    </div>
+    <script>
+    $(function() {
+        $(".appointment-delete-link").on("click", function() {
+            var delete_url = $(this).attr('data-delete-url');
+            $.ajax({
+                url: delete_url,
+                type: 'DELETE',
+                success: function(response) {
+                    if (response.status == 'OK') {
+                        window.location = {{ url_for('appointment_list') }};
+                    } else {
+                        alert('Delete failed');
+                    }
+                }
+            });
+            return false;
+        });
+    });
+    </script>
+</body>
+</html>
