@@ -18,14 +18,6 @@ filters.init_app(app)
 # db.Model = Base
 db.Model = Appointment
 
-login_manager = LoginManager()
-login_manager.setup_app(app)
-login_manager.login_view = 'login'
-
-@login_manager.user_loader
-def load_user(user_id):
-    '''Flask-Login hook to load User instance from ID'''
-    return db.session.query(User).get(user_id)
 
 @app.route('/static/<path:path>')
 def send_static(path):
@@ -53,8 +45,6 @@ def appointment_detail(appointment_id):
     '''Provide HTML page with a given appointment'''
     # Query: get Appointment object by ID
     appt = db.session.query(Appointment).get(appointment_id)
-    if appt.user_id != current_user.id:
-        abort(403)
     if appt is None:
         # Abort with Not Found
         abort(404)
@@ -118,8 +108,6 @@ def error_not_found(error):
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('appointment_list'))
     form = LoginForm(request.form)
     error = None
     if request.method == 'POST' and form.validate():
@@ -127,7 +115,6 @@ def login():
         password = form.password.data.lower().strip()
         user, authenticated = User.authenticate(db.session.query, email, password)
         if authenticated:
-            login_user(user)
             return redirect(url_for('appointment_list'))
         else:
             error = 'Incorrect username or password'
@@ -136,7 +123,6 @@ def login():
 
 @app.route('/logout/')
 def logout():
-    logout_user()
     return redirect(url_for('login'))
 
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

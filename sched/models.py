@@ -78,7 +78,7 @@ class Appointment(Base):
     allday = Column(Boolean, default=False)
     location = Column(String(25))
     description = Column(String(25))
-    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=True)
     user = relationship(User, lazy='joined', join_depth=1)
 
     @property
@@ -203,4 +203,3 @@ if __name__ == '__main__':
     # Get the first user in the database
     users = session.query(User).all()
     user = users[0]
-    
